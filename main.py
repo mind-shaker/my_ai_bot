@@ -6,11 +6,12 @@ import os
 # 🔑 Токени
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-print(f"OPENAI_API_KEY {OPENAI_API_KEY}")
-print(f"TELEGRAM_TOKEN {TELEGRAM_TOKEN}")
+#print(f"OPENAI_API_KEY {OPENAI_API_KEY}")
+#print(f"TELEGRAM_TOKEN {TELEGRAM_TOKEN}")
 
 # 🤖 Ініціалізація Telegram бота
 bot = telegram.Bot(token=TELEGRAM_TOKEN)
+print(f"bot {bot}")
 
 # 🔐 Ініціалізація OpenAI
 openai.api_key = OPENAI_API_KEY
@@ -20,7 +21,6 @@ app = FastAPI()
 print(f"app {app}")
 
 
-@app.post("/webhook")
 async def telegram_webhook(request: Request):
     print(f"start webhook")
     data = await request.json()
