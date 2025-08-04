@@ -20,7 +20,7 @@ openai.api_key = OPENAI_API_KEY
 app = FastAPI()
 print(f"app {app}")
 
-
+@app.post("/webhook")
 async def telegram_webhook(request: Request):
     print(f"start webhook")
     data = await request.json()
