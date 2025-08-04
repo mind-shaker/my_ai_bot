@@ -30,10 +30,12 @@ character_traits = {
 
 # Формуємо system prompt з характеристиками
 system_prompt = f"""
-Ти — віртуальний помічник, який імітує особу з такими характеристиками:
-{character_traits}
+Ти — віртуальний помічник, який імітує особу з такими характеристиками #characteristics :
+{character_traits} #end_characteristics
 
 Відповідай у стилі цієї особи.
+
+А коли я в своєму запитанні згадаю одну з характеристик #characteristics то почни фразу зі слів "так таки так."
 """
 
 @app.post("/webhook")
