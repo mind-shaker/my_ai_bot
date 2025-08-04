@@ -1,24 +1,49 @@
 from fastapi import FastAPI, Request
-
 import telegram
+import openai
+import os
 
-# 🔑 Токен бота
-TOKEN ="7795558482:AAE8WEmzTJqQkfSLKUPXjVK40QIUC2mitYg"
+# 🔑 Токени
+TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
-# 🤖 Ініціалізація бота
-bot = telegram.Bot(token=TOKEN)
+# 🤖 Ініціалізація Telegram бота
+bot = telegram.Bot(token=TELEGRAM_TOKEN)
 
-# 🌐 FastAPI додаток
+# 🔐 Ініціалізація OpenAI
+openai.api_key = OPENAI_API_KEY
+
+# 🌐 FastAPI сервер
 app = FastAPI()
 
-# 📩 Обробка вхідних POST-запитів з Telegram
+
 @app.post("/webhook")
 async def telegram_webhook(request: Request):
     data = await request.json()
     message = data.get("message", {})
     chat_id = message.get("chat", {}).get("id")
+    user_text = message.get("text")
 
-    if chat_id:
-        bot.send_message(chat_id=chat_id, text="Зрозумів")
+    if not chat_id or not user_text:
+        return {"status": "ignored"}
+
+    # 🧠 Надсилаємо запит до OpenAI
+    try:
+        response = await call_gpt(user_text)
+        await bot.send_message(chat_id=chat_id, text=response)
+    except Exception as e:
+        await bot.send_message(chat_id=chat_id, text="❌ Сталася помилка під час відповіді GPT.")
+        print(f"Помилка GPT: {e}")
 
     return {"status": "ok"}
+
+
+async def call_gpt(user_prompt: str) -> str:
+    completion = await openai.ChatCompletion.acreate(
+        model="gpt-3.5-turbo",  # або gpt-4
+        messages=[
+            {"role": "system", "content": "Ти корисний Telegram-помічник."},
+            {"role": "user", "content": user_prompt}
+        ]
+    )
+    return completion.choices[0].message.content.strip()
