@@ -14,8 +14,8 @@ bot = telegram.Bot(token=TELEGRAM_TOKEN)
 print(f"bot {bot}")
 
 # 🔐 Ініціалізація OpenAI
-openai_client = OpenAI(api_key=OPENAI_API_KEY)
-#openai.api_key = OPENAI_API_KEY
+#openai_client = OpenAI(api_key=OPENAI_API_KEY)
+openai.api_key = OPENAI_API_KEY
 
 # 🌐 FastAPI сервер
 app = FastAPI()
@@ -45,7 +45,7 @@ async def telegram_webhook(request: Request):
 
 async def call_gpt(user_prompt: str) -> str:
     try:
-        completion = await openai_client.chat.completions.create(
+        response = await openai.ChatCompletion.create(
             model="gpt-4o",
             messages=[
                 {"role": "system", "content": "Ти корисний Telegram-помічник."},
