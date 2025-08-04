@@ -14,13 +14,27 @@ bot = telegram.Bot(token=TELEGRAM_TOKEN)
 print(f"bot {bot}")
 
 # 🔐 Ініціалізація OpenAI
-#openai_client = OpenAI(api_key=OPENAI_API_KEY)
 openai_client = AsyncOpenAI(api_key=OPENAI_API_KEY)
-#openai.api_key = OPENAI_API_KEY
 
 # 🌐 FastAPI сервер
 app = FastAPI()
 print(f"app {app}")
+
+# Змінна JSON з характеристиками особистості
+character_traits = {
+    "залежності": ["алкоголізм", "куріння"],
+    "позитивні_риси": ["доброта", "чесність", "працьовитість"],
+    "негативні_риси": ["імпульсивність", "невпевненість"],
+    "інтереси": ["читання", "спорт", "музика"]
+}
+
+# Формуємо system prompt з характеристиками
+system_prompt = f"""
+Ти — віртуальний помічник, який імітує особу з такими характеристиками:
+{character_traits}
+
+Відповідай у стилі цієї особи.
+"""
 
 @app.post("/webhook")
 async def telegram_webhook(request: Request):
@@ -49,11 +63,10 @@ async def call_gpt(user_prompt: str) -> str:
         completion = await openai_client.chat.completions.create(
             model="gpt-4o",
             messages=[
-                {"role": "system", "content": "Ти корисний Telegram-помічник."},
+                {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_prompt}
             ]
         )
         return completion.choices[0].message.content.strip()
     except Exception as e:
         return f"⚠️ Помилка при запиті до OpenAI API: {e}"
-
