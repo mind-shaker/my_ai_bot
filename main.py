@@ -42,12 +42,16 @@ async def telegram_webhook(request: Request):
     return {"status": "ok"}
 
 
-async def call_gpt(user_prompt: str) -> str:
-    completion = await openai.ChatCompletion.acreate(
-        model="gpt-3.5-turbo",  # або gpt-4
-        messages=[
-            {"role": "system", "content": "Ти корисний Telegram-помічник."},
-            {"role": "user", "content": user_prompt}
-        ]
-    )
-    return completion.choices[0].message.content.strip()
+async def call_gpt(user_prompt: str) -> str:ї
+    try:
+        completion = await openai.chat.completions.create(
+            model="gpt-4o",  # або gpt-4
+            messages=[
+                {"role": "system", "content": "Ти корисний Telegram-помічник."},
+                {"role": "user", "content": user_prompt}
+            ]
+        )
+        return completion.choices[0].message.content.strip()
+    except Exception as e:
+        return f"⚠️ Помилка при запиті до OpenAI API: {e}"
+
