@@ -42,10 +42,10 @@ async def telegram_webhook(request: Request):
     return {"status": "ok"}
 
 
-async def call_gpt(user_prompt: str) -> str:ї
+async def call_gpt(user_prompt: str) -> str:
     try:
-        completion = await openai.chat.completions.create(
-            model="gpt-4o",  # або gpt-4
+        completion = await openai_client.chat.completions.create(
+            model="gpt-4o",
             messages=[
                 {"role": "system", "content": "Ти корисний Telegram-помічник."},
                 {"role": "user", "content": user_prompt}
