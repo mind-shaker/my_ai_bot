@@ -14,7 +14,8 @@ bot = telegram.Bot(token=TELEGRAM_TOKEN)
 print(f"bot {bot}")
 
 # 🔐 Ініціалізація OpenAI
-openai.api_key = OPENAI_API_KEY
+openai_client = OpenAI(api_key=OPENAI_API_KEY)
+#openai.api_key = OPENAI_API_KEY
 
 # 🌐 FastAPI сервер
 app = FastAPI()
